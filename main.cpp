@@ -3,8 +3,13 @@
 #include <vector>
 #include <string>
 #include <limits>
-using std::vector;
+#include <unordered_map>
+#include <set>
+#include <algorithm>
+using std::set;
 using std::string;
+using std::unordered_map;
+using std::vector;
 
 int maxSubArraySizeK(vector<int> &nums, int k)
 {
@@ -42,18 +47,148 @@ int minSubArrayLen(int target, vector<int> &nums)
     }
     return minLength == std::numeric_limits<int>::max() ? 0 : minLength;
 }
-int kDistChars(string s,int k){
+int kDistChars(string s, int k)
+{
     int maxLength = std::numeric_limits<int>::min();
+    unordered_map<char, int> window;
+    int start = 0;
 
-    return 0;
+    for (int end = 0; end < s.size(); end++)
+    {
+        window[s[end]]++;
+        while (window.size() > k)
+        {
+            window[s[start]]--;
+            if (window.find(s[start])->second == 0)
+            {
+                window.erase(s[start]);
+            }
+            start++;
+        }
+        maxLength = std::max(end - start + 1, maxLength);
+    }
+
+    return maxLength == std::numeric_limits<int>::min() ? 0 : maxLength;
+}
+int MaxFruits(vector<char> &fruits)
+{
+    int MaxFruits = 0;
+    unordered_map<char, int> basket;
+    int start = 0;
+
+    for (int end = 0; end < fruits.size(); end++)
+    {
+        basket[fruits[end]]++;
+        while (basket.size() > 2)
+        {
+            basket[fruits[start]]--;
+            if (basket.find(fruits[start])->second == 0)
+            {
+                basket.erase(fruits[start]);
+            }
+        }
+        MaxFruits = std::max(end - start + 1, MaxFruits);
+    }
+    return MaxFruits;
+}
+int LongestDistinct(string &s)
+{
+    int LongestLength = 0;
+    int start = 0;
+    set<char> window;
+
+    for (int end = 0; end < s.size(); end++)
+    {
+
+        while (window.find(s[end]) != window.end())
+        {
+            window.erase(s[start]);
+            start++;
+        }
+        LongestLength = std::max(end - start + 1, LongestLength);
+        window.insert(s[end]);
+    }
+
+    return LongestLength;
+}
+int LetterReplace(string s, int k)
+{
+    int maxLength = 0;
+    int start = 0;
+    unordered_map<char, int> window;
+
+    for (int end = 0; end < s.size(); end++)
+    {
+        window[s[end]]++;
+        while ((end - start + 1) - std::max_element(window.begin(), window.end(), [](const std::pair<char, int> &p1, const std::pair<char, int> &p2)
+                                                    { return p1.second < p2.second; })
+                                       ->second >
+               k)
+        {
+            window[s[start]]--;
+            if (window.find(s[start])->second == 0)
+            {
+                window.erase(s[start]);
+            }
+            start++;
+        }
+        maxLength = std::max(maxLength, end - start + 1);
+    }
+    return maxLength;
+}
+int BinaryReplace(vector<int> &nums, int k)
+{
+    int rem = k;
+    int start = 0;
+    int maxLength = 0;
+    for (int end = 0; end < nums.size(); end++)
+    {
+        if (nums[end] == 0)
+        {
+            rem--;
+        }
+        while (rem < 0)
+        {
+            if (nums[start] == 0)
+            {
+                rem++;
+            }
+            start++;
+        }
+        maxLength = std::max(end - start + 1, maxLength);
+    }
+    return maxLength;
+}
+bool PermutationString(string s, string pattern)
+{
+    unordered_map<char, int> one;
+    unordered_map<char, int> window;
+    int start=0;
+    for (auto x : pattern)
+    {
+        one[x]++;
+    }
+    for (int end=0;end<s.size();end++)
+    {
+        window[s[end]]++;
+        if(end-start+1==pattern.size()){
+            if(window==one){
+                return true;
+            }
+            window[s[start]]--;
+            if (window.find(s[start])->second == 0)
+            {
+                window.erase(s[start]);
+            }
+            start++;
+        }
+    }
+    return false;
 }
 int main()
 {
-    vector<int> maxSumTest1 = {2, 1, 5, 1, 3, 2};
-    vector<int> maxSumTest2 = {2, 3, 4, 1, 5};
-    int k1 = 3;
-    int k2 = 2;
-    std::cout << "test 1 is->" << maxSubArraySizeK(maxSumTest1, k1) << std::endl;
-    std::cout << "test 2 is->" << maxSubArraySizeK(maxSumTest2, k2) << std::endl;
+    string s = "dcda";
+    PermutationString(s, "adc");
+
     return 0;
 }
