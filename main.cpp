@@ -44,6 +44,8 @@ int minSubArrayLen(int target, vector<int> &nums)
 }
 int kDistChars(string s,int k){
     int maxLength = std::numeric_limits<int>::min();
+
+    return 0;
 }
 int main()
 {
