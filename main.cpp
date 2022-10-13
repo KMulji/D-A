@@ -163,16 +163,18 @@ bool PermutationString(string s, string pattern)
 {
     unordered_map<char, int> one;
     unordered_map<char, int> window;
-    int start=0;
+    int start = 0;
     for (auto x : pattern)
     {
         one[x]++;
     }
-    for (int end=0;end<s.size();end++)
+    for (int end = 0; end < s.size(); end++)
     {
         window[s[end]]++;
-        if(end-start+1==pattern.size()){
-            if(window==one){
+        if (end - start + 1 == pattern.size())
+        {
+            if (window == one)
+            {
                 return true;
             }
             window[s[start]]--;
@@ -185,10 +187,98 @@ bool PermutationString(string s, string pattern)
     }
     return false;
 }
+int atMostK(vector<int> &nums, int k)
+{
+    int start = 0;
+    int res = 0;
+    unordered_map<int, int> count;
+    for (int end = 0; end < nums.size(); end++)
+    {
+        count[nums[end]]++;
+        if (count.find(nums[end])->second == 1)
+        {
+            k--;
+        }
+        while (k < 0)
+        {
+            count[nums[start]]--;
+            if (count.find(nums[start])->second == 0)
+            {
+                k++;
+            }
+            start++;
+        }
+        res += end - start + 1;
+    }
+    return res;
+}
+int subarraysWithKDistinct(vector<int> &A, int K)
+{
+    int i = atMostK(A, K);
+    int j = atMostK(A, K - 1);
+    return i - j;
+}
+int AtMost2(vector<int> &nums, int k)
+{
+
+    int start = 0;
+    int res = 0;
+
+    for (int end = 0; end < nums.size(); end++)
+    {
+        // if its odd
+        if (nums[end] % 2 != 0)
+        {
+            k--;
+        }
+
+        while (k < 0)
+        {
+            if (nums[start] % 2 != 0)
+            {
+                k++;
+            }
+
+            start++;
+        }
+        res += (end - start) + 1;
+    }
+    return res;
+}
+int numberOfSubarrays(vector<int> &nums, int k)
+{
+    int i = AtMost2(nums, k);
+    int j = AtMost2(nums, k - 1);
+    return i - j;
+}
+int AtMost3(vector<int> &nums, int goal)
+{
+    int start = 0;
+    int res = 0;
+    int windowSum = 0;
+
+    for (int end = 0; end < nums.size(); end++)
+    {
+        windowSum += nums[end];
+
+        while (windowSum > goal)
+        {
+            windowSum -= nums[start];
+            start++;
+        }
+        res += (end - start) + 1;
+    }
+    return res;
+}
+int numSubarraysWithSum(vector<int> &nums, int goal)
+{
+    int i = AtMost3(nums, goal);
+    int j = AtMost3(nums, goal - 1);
+    return i - j;
+}
 int main()
 {
-    string s = "dcda";
-    PermutationString(s, "adc");
-
+    vector<int> test = {0, 0, 0, 0, 0};
+    numSubarraysWithSum(test, 0);
     return 0;
 }
